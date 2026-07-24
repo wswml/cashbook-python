@@ -1,0 +1,31 @@
+# 密钥文件 — 不要提交
+password.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Android / Gradle
+.gradle/
+build/
+*.apk
+*.zip
+.idea/
+*.iml
+local.properties
+
+# 运行时
+*.db
+*.log
+
+# 临时文件
+tmp/
+*.tmp
+.DS_Store
+
+# Token 缓存
+.jz_token
+
+# IDE
+.vscode/

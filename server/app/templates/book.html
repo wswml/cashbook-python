@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账本详情</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand"><i class="fas fa-book-open"></i><span id="bookName">账本</span></div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="toggleTheme()" title="切换主题"><i class="fas fa-moon" id="themeIcon"></i></button>
+            <button class="nav-btn" onclick="window.location.href='/'" title="返回"><i class="fas fa-arrow-left"></i></button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- 总览 -->
+        <div class="overview-card animate-in delay-1">
+            <div class="overview-header">
+                <span class="overview-label">本月结余</span>
+                <div class="overview-period" onclick="prevMonth()" style="cursor:pointer;">
+                    <i class="fas fa-chevron-left" style="font-size:0.7rem;"></i>
+                    <span id="monthLabel">本月</span>
+                    <i class="fas fa-chevron-right" style="font-size:0.7rem;" onclick="event.stopPropagation();nextMonth()"></i>
+                </div>
+            </div>
+            <div class="overview-balance" id="balance">¥0.00</div>
+            <div class="overview-stats">
+                <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-down" style="font-size:0.7rem;"></i>收入</div><div class="stat-value" id="totalIncome">¥0</div></div>
+                <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-up" style="font-size:0.7rem;"></i>支出</div><div class="stat-value" id="totalExpense">¥0</div></div>
+            </div>
+        </div>
+
+        <!-- Tab 切换 -->
+        <div class="quick-actions animate-in delay-2">
+            <div class="action-btn expense" onclick="switchView('flows')" style="border-color:var(--accent);">
+                <div class="action-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="fas fa-list"></i></div>
+                <div class="action-text">流水</div>
+            </div>
+            <div class="action-btn income" onclick="switchView('stats')">
+                <div class="action-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="fas fa-chart-pie"></i></div>
+                <div class="action-text">统计</div>
+            </div>
+            <div class="action-btn transfer" onclick="switchView('members')">
+                <div class="action-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="fas fa-users"></i></div>
+                <div class="action-text">成员</div>
+            </div>
+            <div class="action-btn transfer" onclick="showShareSheet()">
+                <div class="action-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="fas fa-share-alt"></i></div>
+                <div class="action-text">分享</div>
+            </div>
+        </div>
+
+        <!-- 流水视图 -->
+        <div id="flowsView">
+            <div class="category-grid" id="flowCategoryFilter" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+                <div class="category-item active" onclick="filterFlows('all',this)" style="padding:10px 4px;"><div class="category-name">全部</div></div>
+                <div class="category-item" onclick="filterFlows('餐饮',this)" style="padding:10px 4px;"><div class="category-name">餐饮</div></div>
+                <div class="category-item" onclick="filterFlows('交通',this)" style="padding:10px 4px;"><div class="category-name">交通</div></div>
+                <div class="category-item" onclick="filterFlows('购物',this)" style="padding:10px 4px;"><div class="category-name">购物</div></div>
+            </div>
+            <div class="transaction-list" id="flowList"></div>
+        </div>
+
+        <!-- 统计视图 -->
+        <div id="statsView" style="display:none;">
+            <div class="chart-card"><div class="section-title" style="margin-bottom:16px;">支出类型分布</div><div style="height:240px;"><canvas id="typeChart"></canvas></div></div>
+            <div class="chart-card"><div class="section-title" style="margin-bottom:16px;">每日趋势</div><div style="height:200px;"><canvas id="trendChart"></canvas></div></div>
+        </div>
+
+        <!-- 成员视图 -->
+        <div id="membersView" style="display:none;">
+            <div class="transaction-list" id="memberList"></div>
+        </div>
+    </main>
+
+    <!-- 底部导航 -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchView('flows')"><i class="fas fa-list"></i><span>流水</span></div>
+        <div class="nav-item" onclick="switchView('stats')"><i class="fas fa-chart-pie"></i><span>统计</span></div>
+        <div class="nav-item add-btn" onclick="openSheet()"><i class="fas fa-plus"></i></div>
+        <div class="nav-item" onclick="switchView('members')"><i class="fas fa-users"></i><span>成员</span></div>
+        <div class="nav-item" onclick="window.location.href='/'"><i class="fas fa-home"></i><span>首页</span></div>
+    </nav>
+
+    <!-- 记账弹窗 -->
+    <div class="modal-overlay" id="recordModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header"><h3 class="modal-title">记一笔</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+            <div class="type-toggle">
+                <div class="type-option active" onclick="setType('expense',this)">支出</div>
+                <div class="type-option income-opt" onclick="setType('income',this)">收入</div>
+            </div>
+            <div class="amount-input-wrapper">
+                <label>金额</label>
+                <input type="text" class="amount-display" id="modalMoney" value="¥0.00" readonly>
+            </div>
+            <div class="numpad">
+                <button class="numpad-btn" onclick="inputNum('1')">1</button>
+                <button class="numpad-btn" onclick="inputNum('2')">2</button>
+                <button class="numpad-btn" onclick="inputNum('3')">3</button>
+                <button class="numpad-btn" onclick="inputNum('4')">4</button>
+                <button class="numpad-btn" onclick="inputNum('5')">5</button>
+                <button class="numpad-btn" onclick="inputNum('6')">6</button>
+                <button class="numpad-btn" onclick="inputNum('7')">7</button>
+                <button class="numpad-btn" onclick="inputNum('8')">8</button>
+                <button class="numpad-btn" onclick="inputNum('9')">9</button>
+                <button class="numpad-btn action" onclick="inputNum('.')">.</button>
+                <button class="numpad-btn" onclick="inputNum('0')">0</button>
+                <button class="numpad-btn action" onclick="inputBack()"><i class="fas fa-backspace"></i></button>
+            </div>
+            <div class="form-group"><label class="form-label">选择分类</label>
+                <div class="category-select" id="modalCatGrid"></div>
+            </div>
+            <div class="form-group"><label class="form-label">名称</label><input type="text" id="modalName" class="form-input" placeholder="如：午餐"></div>
+            <div class="form-group"><label class="form-label">日期</label><input type="date" id="modalDate" class="form-input"></div>
+            <button class="submit-btn" onclick="saveFlow()">保存</button>
+        </div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div class="modal-overlay" id="shareModal" onclick="closeShareModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header"><h3 class="modal-title">分享账本</h3><button class="modal-close" onclick="closeShareModal()"><i class="fas fa-times"></i></button></div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:20px;">分享密钥<br><strong id="shareKeyDisplay" style="font-size:1.2rem;color:var(--accent);letter-spacing:2px;"></strong></p>
+            <button class="submit-btn" onclick="copyShareKey()">复制密钥</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script>window.bookId="{{ book_id }}";</script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="/static/js/book.js?v=5"></script>
+</body>
+</html>

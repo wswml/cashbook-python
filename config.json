@@ -1,0 +1,159 @@
+{
+  "_comment": "Cashbook 记账项目 — 工业级配置文件 (v1.0)",
+  "_generated": "2026-07-24",
+  "_status": "运行正常",
+
+  "project": {
+    "name": "Cashbook",
+    "version": "1.0.0",
+    "repository": "~/WechatReader/ (本地 Xposed 模块) + 47.99.240.71:/root/cashbook-python/ (服务器)"
+  },
+
+  "server": {
+    "host": "47.99.240.71",
+    "port": 9090,
+    "ssh_user": "root",
+    "ssh_auth": "key (免密登录)",
+    "os": "Ubuntu 22.04",
+    "spec": "Intel Xeon 2核, 1.6GB RAM, 40GB SSD",
+    "provider": "阿里云",
+    "url": "http://47.99.240.71:9090",
+    "login_url": "http://47.99.240.71:9090/login",
+    "api_base": "http://47.99.240.71:9090/api"
+  },
+
+  "server_app": {
+    "name": "cashbook",
+    "path": "/root/cashbook-python",
+    "process_manager": "PM2",
+    "pm2_name": "cashbook",
+    "interpreter": "python3",
+    "entry": "main.py",
+    "framework": "FastAPI",
+    "cors": "*",
+    "database": {
+      "engine": "MySQL",
+      "driver": "pymysql",
+      "host": "127.0.0.1",
+      "port": 3306,
+      "database": "cashbook",
+      "user": "cashbook",
+      "charset": "utf8mb4",
+      "orm": "SQLAlchemy 2.0.31"
+    },
+    "auth": {
+      "method": "JWT (Bearer Token)",
+      "algorithm": "HS256",
+      "token_expire_days": 7,
+      "refresh_threshold_days": 1,
+      "password_hash": "bcrypt (passlib)"
+    },
+    "ai_classifier": {
+      "provider": "DeepSeek",
+      "model": "deepseek-chat",
+      "timeout": 15,
+      "max_retries": 3,
+      "cache_file": "classification_cache.json"
+    },
+    "dependencies": [
+      "fastapi==0.111.0",
+      "uvicorn[standard]==0.30.0",
+      "sqlalchemy==2.0.31",
+      "pymysql==1.1.1",
+      "cryptography==42.0.8",
+      "python-jose[cryptography]==3.3.0",
+      "passlib[bcrypt]==1.7.4",
+      "python-multipart==0.0.9",
+      "jinja2==3.1.4",
+      "aiofiles==24.1.0",
+      "python-dotenv==1.0.1",
+      "alembic==1.13.2",
+      "pandas==2.2.2",
+      "openpyxl==3.1.5"
+    ]
+  },
+
+  "books": {
+    "default": {
+      "book_id": "1-u3wit23z",
+      "name": "默认家庭账本"
+    }
+  },
+
+  "local_paths": {
+    "jz_cli": "~/bin/jz",
+    "jz_import_script": "~/jz_import.py",
+    "jz_parser": "~/WechatReader/jz.py",
+    "csv_output": "/sdcard/Download/qianji.csv",
+    "wechat_log": "/sdcard/Download/WechatReader/messages.log",
+    "alipay_db": "/data/data/com.eg.android.AlipayGphone/databases/messagebox.db",
+    "alipay_tmp": "/data/local/tmp/alipay_export.db",
+    "alipay_last_id": "/sdcard/Download/WechatReader/.alipay_last_id"
+  },
+
+  "wechatreader_module": {
+    "type": "Xposed (LSPosed) 模块",
+    "package": "com.nous.wechatreader",
+    "target": "微信 (com.tencent.mm)",
+    "source": "~/WechatReader/app/src/main/java/com/nous/wechatreader/",
+    "java_files": [
+      "WechatReader.java",
+      "DailyExportReceiver.java"
+    ],
+    "build": {
+      "agp": "8.2.0",
+      "compile_sdk": 34,
+      "jdk": 17,
+      "xposed_api": "de.robv.android.xposed:api:82 (compileOnly)"
+    },
+    "export_format": "qianji.csv (鲨鱼记账格式)"
+  },
+
+  "categories": {
+    "expense": {
+      "餐饮": ["早餐", "午餐", "晚餐", "饭", "面", "粉", "饺子", "包子", "外卖", "火锅", "烧烤", "奶茶", "咖啡", "水", "饮料", "水果", "零食", "面包", "蛋糕"],
+      "交通": ["打车", "地铁", "公交", "出租", "加油", "停车", "过路", "车", "油"],
+      "购物": ["超市", "便利店", "买", "衣服", "鞋", "包", "日用品", "百货"],
+      "生活": ["水电", "燃气", "物业", "话费", "网费", "理发", "打印", "快递"],
+      "娱乐": ["电影", "游戏", "KTV", "旅游", "景点", "门票", "健身"]
+    },
+    "income": {
+      "工资": ["工资", "薪水", "奖金", "补贴"],
+      "红包": ["红包"],
+      "转账": ["转账", "转入"],
+      "报销": ["报销"],
+      "退款": ["退款", "退票", "退货"]
+    },
+    "refund_keywords": ["退款", "退票", "退货", "退"],
+    "default": "未分类"
+  },
+
+  "jz_cli_usage": {
+    "expense": "jz 15 早餐",
+    "expense_explicit": "jz s 15 早餐",
+    "income": "jz r 5000 工资",
+    "auto_refund": "jz 50 退款 → 自动识别为收入/退款",
+    "env_vars": {
+      "CASHBOOK_SERVER": "47.99.240.71:9090",
+      "CASHBOOK_USER": "admin",
+      "CASHBOOK_BOOK": "1-u3wit23z"
+    }
+  },
+
+  "import_pipeline": {
+    "step_1": "python3 ~/WechatReader/jz.py → 生成 /sdcard/Download/qianji.csv",
+    "step_2": "scp CSV 到服务器 /tmp/qj_<pid>.csv",
+    "step_3": "服务器 POST /api/entry/import/qianji 增量导入",
+    "step_4": "清理服务器临时文件",
+    "dedup": "四元组去重: (时间, 类型, 金额, 备注)",
+    "bom_workaround": "utf-8-sig 多次 encode 堆多 BOM，scp 前必须 data.replace(b'\\xef\\xbb\\xbf', b'') 清所有 BOM"
+  },
+
+  "known_pitfalls": [
+    "BOM陷阱: utf-8-sig多次encode堆多BOM, decode只清一个 → scp前清所有BOM",
+    "JWT sub 必须是 str() 类型",
+    "微信支付XML有CDATA包裹，正则需同时匹配CDATA和纯文本格式",
+    "退款消息 display_name 可能为空，需从 des 提取商户名 fallback",
+    "DeepSeek API key 需在 PM2 env 和 .env 两处配置，main.py需load_dotenv()"
+  ]
+}

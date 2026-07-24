@@ -1,0 +1,187 @@
+#!/data/data/com.termux/files/usr/bin/env python3
+"""jz — 一句话记账 (CashBook quick-save CLI)
+
+用法:
+    jz <金额> <名称>            # 支出，如: jz 15 早餐
+    jz <名称> <金额>            # 自动识别
+    jz s <金额> <名称>          # 支出
+    jz r <金额> <名称>          # 收入
+
+配置: ~/config.json + ~/password.json
+环境变量可覆盖: CASHBOOK_URL, CASHBOOK_USER, CASHBOOK_PASS, CASHBOOK_BOOK
+"""
+import os, sys, re, json, time
+from urllib.request import Request, urlopen
+from urllib.error import URLError
+
+# 确保能找到项目根的 cashbook_config.py
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# ── 统一配置 ──
+from cashbook_config import (
+    SERVER_URL as BASE, ADMIN_USER as USER, ADMIN_PASS as PASS,
+    DEFAULT_BOOK_ID as BOOK_ID, TOKEN_FILE,
+    EXPENSE_CATS, INCOME_CATS, REFUND_KEYWORDS, DEFAULT_CAT,
+)
+
+# 环境变量可覆盖（兼容旧习惯）
+BASE     = os.getenv("CASHBOOK_URL", BASE)
+USER     = os.getenv("CASHBOOK_USER", USER)
+PASS     = os.getenv("CASHBOOK_PASS", PASS)
+BOOK_ID  = os.getenv("CASHBOOK_BOOK", BOOK_ID)
+
+def cat_for(name: str, flow_type: str) -> str:
+    """根据名称自动推断分类"""
+    if not name:
+        return DEFAULT_CAT
+    d = INCOME_CATS if flow_type == "收入" else EXPENSE_CATS
+    for cat, keywords in d.items():
+        for kw in keywords:
+            if kw in name:
+                return cat
+    return DEFAULT_CAT
+
+# ── HTTP 工具 ──
+def api_post(path: str, data: dict, token: str = None) -> dict:
+    url = f"{BASE}{path}"
+    body = json.dumps(data).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    try:
+        req = Request(url, data=body, headers=headers)
+        resp = urlopen(req, timeout=10)
+        return json.loads(resp.read())
+    except URLError as e:
+        if hasattr(e, 'read'):
+            return json.loads(e.read())
+        return {"code": 500, "message": str(e)}
+
+# ── Token 管理 ──
+def get_token() -> str:
+    """获取缓存的 token，过期自动刷新"""
+    now = time.time()
+    if os.path.exists(TOKEN_FILE):
+        try:
+            with open(TOKEN_FILE) as f:
+                data = json.load(f)
+            if data.get("exp", 0) > now:
+                return data["token"]
+        except:
+            pass
+    return login()
+
+def login() -> str:
+    """登录并缓存 token"""
+    r = api_post("/api/auth/login", {"username": USER, "password": PASS})
+    if r.get("code") != 200:
+        print(f"❌ 登录失败: {r.get('message', '未知错误')}", file=sys.stderr)
+        sys.exit(1)
+    token = r["data"]["access_token"]
+    # 缓存，有效期7天，提前1天刷新
+    with open(TOKEN_FILE, "w") as f:
+        json.dump({"token": token, "exp": time.time() + 6*86400}, f)
+    return token
+
+# ── 主逻辑 ──
+def main():
+    args = sys.argv[1:]
+    if not args or args[0] in ("-h", "--help"):
+        print(__doc__.strip())
+        return
+
+    flow_type = "支出"
+    idx = 0
+
+    # 解析方向
+    if args[0] in ("s", "支出", "支", "花", "付"):
+        flow_type = "支出"
+        idx = 1
+    elif args[0] in ("r", "收入", "收", "赚"):
+        flow_type = "收入"
+        idx = 1
+
+    rest = args[idx:]
+
+    # 解析金额和名称
+    money = None
+    name = ""
+    for i, a in enumerate(rest):
+        # 尝试解析数字
+        try:
+            m = float(a.replace("¥","").replace("$","").replace(",",""))
+            money = m
+            name = " ".join(rest[:i] + rest[i+1:])
+            break
+        except ValueError:
+            continue
+
+    if money is None and len(rest) >= 2:
+        # fallback: 最后一个当作金额
+        try:
+            money = float(rest[-1].replace("¥","").replace("$","").replace(",",""))
+            name = " ".join(rest[:-1])
+        except:
+            pass
+
+    if money is None:
+        print("❌ 无法解析金额，用法: jz 15 早餐", file=sys.stderr)
+        sys.exit(1)
+
+    name = name.strip()
+    if not name:
+        name = input("📝 输入名称(描述): ").strip()
+    if not name:
+        name = "快捷记账"
+
+    # 自动分类
+    cat = cat_for(name, flow_type)
+
+    # 退款自动识别为收入（覆盖手动指定）
+    if flow_type == "支出":
+        for kw in REFUND_KEYWORDS:
+            if kw in name:
+                flow_type = "收入"
+                cat = cat_for(name, flow_type)
+                break
+
+    # 保存
+    token = get_token()
+    today = time.strftime("%Y-%-m-%-d")
+    r = api_post("/api/entry/flow/add", {
+        "book_id": BOOK_ID,
+        "day": today,
+        "flow_type": flow_type,
+        "industry_type": cat,
+        "pay_type": "现金",
+        "money": money,
+        "name": name,
+    }, token)
+
+    if r.get("code") == 200:
+        icon = "📤" if flow_type == "支出" else "📥"
+        print(f"{icon}  {flow_type} ¥{money:.2f}  {name}  [{cat}]")
+    else:
+        msg = r.get("message", str(r))
+        # token 过期重试一次
+        if "token" in msg.lower() or "登录" in msg or "401" in str(r):
+            os.remove(TOKEN_FILE)
+            token = login()
+            r = api_post("/api/entry/flow/add", {
+                "book_id": BOOK_ID,
+                "day": today,
+                "flow_type": flow_type,
+                "industry_type": cat,
+                "pay_type": "现金",
+                "money": money,
+                "name": name,
+            }, token)
+            if r.get("code") == 200:
+                icon = "📤" if flow_type == "支出" else "📥"
+                print(f"{icon}  {flow_type} ¥{money:.2f}  {name}  [{cat}]")
+                return
+        print(f"❌ 保存失败: {msg}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
