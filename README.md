@@ -54,7 +54,7 @@
 ### 首次 Clone
 
 ```bash
-git clone https://github.com/wswml/cashbook.git ~/cashbook
+git clone https://github.com/wswml/cashbook-python.git ~/cashbook
 cd ~/cashbook
 cp password.json.example password.json
 # 编辑 password.json 填入实际密钥
