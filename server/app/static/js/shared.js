@@ -14,12 +14,12 @@ async function api(url,o={}){
 const _theme=localStorage.getItem('theme')||'light';
 document.documentElement.setAttribute('data-theme',_theme);
 const _ti=document.getElementById('themeIcon');
-if(_ti)_ti.className=_theme==='dark'?'fas fa-sun':'fas fa-moon';
+if(_ti)_ti.className=_theme==='dark'?'ph ph-sun':'ph ph-moon';
 function toggleTheme(){
     const d=document.documentElement.getAttribute('data-theme')==='dark';
     document.documentElement.setAttribute('data-theme',d?'light':'dark');
     const el=document.getElementById('themeIcon');
-    if(el)el.className=d?'fas fa-moon':'fas fa-sun';
+    if(el)el.className=d?'ph ph-moon':'ph ph-sun';
     localStorage.setItem('theme',d?'light':'dark')
 }
 

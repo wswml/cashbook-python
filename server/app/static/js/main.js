@@ -1,4 +1,4 @@
-/* 珍珍收支手札 SPA — 首页按月 · 统计日历 · 日期抽屉 */
+/* 珍智账 SPA — 首页按月 · 统计日历 · 日期抽屉 */
 let books=[],currentBookId='',flows=[],allFlows=[],recordType='expense',homeChart=null,pieChart=null;
 let flowPage=0,flowPageSize=20,flowLoading=false;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth()+1;
@@ -42,7 +42,7 @@ async function loadHome(){
 function renderBookSelector(){
     const el=document.getElementById('homeBookSelector');
     el.innerHTML=books.map(b=>'<div class="book-pill'+(b.book_id===currentBookId?' active':'')+'" onclick="selectBook(\''+b.book_id+'\',this)">'+
-        '<i class="fas fa-book" style="margin-right:6px;font-size:0.7rem;"></i>'+b.book_name+'</div>').join('')
+        '<i class="ph ph-book" style="margin-right:6px;font-size:0.7rem;"></i>'+b.book_name+'</div>').join('')
 }
 
 async function selectBook(bid,el){flowPage=0;
@@ -80,8 +80,8 @@ function renderFlowPage(){
     list.innerHTML=items.map((f,i)=>{
         const ic=f.flow_type==='收入';
         const cls={'餐饮':'cat-food','交通':'cat-transport','购物':'cat-shopping','居住':'cat-housing','娱乐':'cat-entertainment','医疗':'cat-medical','教育':'cat-education'}[f.industry_type]||'cat-other';
-        const icon={'餐饮':'utensils','交通':'bus','购物':'shopping-bag','居住':'home','娱乐':'film','医疗':'heartbeat','教育':'graduation-cap'}[f.industry_type]||'ellipsis-h';
-        return '<div class="tx-item stagger" style="animation-delay:'+((i%20)*0.05)+'s;"><div class="tx-icon '+cls+'"><i class="fas fa-'+icon+'"></i></div><div class="tx-info"><div class="tx-title">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+f.day+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
+        const icon={'餐饮':'fork-knife','交通':'bus','购物':'shopping-bag','居住':'house','娱乐':'film-strip','医疗':'heartbeat','教育':'graduation-cap'}[f.industry_type]||'dots-three';
+        return '<div class="tx-item stagger" style="animation-delay:'+((i%20)*0.05)+'s;"><div class="tx-icon '+cls+'"><i class="ph ph-'+icon+'"></i></div><div class="tx-info"><div class="tx-title">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+f.day+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
     }).join('');
     // 底部加载指示器
     if(end<recent.length)list.innerHTML+='<div id="flowLoader" style="text-align:center;padding:16px 0;"><div class="loader-dots"><span></span><span></span><span></span></div></div>';
@@ -211,8 +211,8 @@ function showDateDetail(ds,el){
         content.innerHTML=dayFlows.map(f=>{
             const ic=f.flow_type==='收入';
             const cls={'餐饮':'cat-food','交通':'cat-transport','购物':'cat-shopping','居住':'cat-housing','娱乐':'cat-entertainment','医疗':'cat-medical','教育':'cat-education'}[f.industry_type]||'cat-other';
-            const icon={'餐饮':'utensils','交通':'bus','购物':'shopping-bag','居住':'home','娱乐':'film','医疗':'heartbeat','教育':'graduation-cap'}[f.industry_type]||'ellipsis-h';
-            return '<div class="tx-item" style="padding:8px 0;"><div class="tx-icon '+cls+'" style="width:36px;height:36px;font-size:0.8rem;"><i class="fas fa-'+icon+'"></i></div><div class="tx-info"><div class="tx-title" style="font-size:0.85rem;">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+(f.attribution||'我')+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'" style="font-size:0.9rem;">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
+            const icon={'餐饮':'fork-knife','交通':'bus','购物':'shopping-bag','居住':'house','娱乐':'film-strip','医疗':'heartbeat','教育':'graduation-cap'}[f.industry_type]||'dots-three';
+            return '<div class="tx-item" style="padding:8px 0;"><div class="tx-icon '+cls+'" style="width:36px;height:36px;font-size:0.8rem;"><i class="ph ph-'+icon+'"></i></div><div class="tx-info"><div class="tx-title" style="font-size:0.85rem;">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+(f.attribution||'我')+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'" style="font-size:0.9rem;">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
         }).join('')
     }
     const pop=document.getElementById('datePopover');
@@ -250,9 +250,9 @@ async function loadBookList(){
         list.innerHTML='<div class="transaction-list">'+books.map((b,i)=>
             '<div class="tx-item" data-bid="'+b.book_id+'">'+
             (mg?'<input type="checkbox" class="book-cb" value="'+b.book_id+'" style="width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;">':'')+
-            '<div class="tx-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="fas fa-book"></i></div>'+
+            '<div class="tx-icon" style="background:var(--accent-bg);color:var(--accent);"><i class="ph ph-book"></i></div>'+
             '<div class="tx-info"><div class="tx-title">'+b.book_name+'</div><div class="tx-meta">'+(b.share_key?'共享':'个人')+'</div></div>'+
-            (mg?'':'<i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:0.8rem;"></i>')+'</div>'+
+            (mg?'':'<i class="ph ph-caret-right" style="color:var(--text-muted);font-size:0.8rem;"></i>')+'</div>'+
             (i<books.length-1?'<div style="height:0.5px;background:var(--border);margin:0 16px;"></div>':'')
         ).join('')+'</div>';
         // 管理模式点击勾选，普通模式跳转
@@ -265,10 +265,10 @@ function toggleBookManage(){
     const btn=document.getElementById('bookManageBtn');
     if(bar.style.display!=='none'){
         bar.style.display='none';
-        btn.innerHTML='<i class="fas fa-pen"></i> 管理';
+        btn.innerHTML='<i class="ph ph-pencil"></i> 管理';
     }else{
         bar.style.display='block';
-        btn.innerHTML='<i class="fas fa-times"></i> 取消';
+        btn.innerHTML='<i class="ph ph-x"></i> 取消';
     }
     loadBookList()
 }
@@ -290,7 +290,7 @@ async function batchDeleteBooks(){
 
 // ===== 我的 =====
 function loadProfile(){
-    document.getElementById('avatarDisplay').textContent=(user.name||user.username||'👤').charAt(0);
+    document.getElementById('avatarDisplay').innerHTML='<i class="ph ph-user-circle"></i> '+(user.name||user.username||'').charAt(0);
     document.getElementById('userNameDisplay').textContent=user.name||user.username||'用户';
     document.getElementById('userBooksCount').textContent=books.length+' 个账本'
 }

@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>珍珍收支手札</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
-    <link rel="stylesheet" href="/static/css/style.css?v=7">
+    <title>珍智账</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💜</text></svg>">
+    <link rel="stylesheet" href="/static/css/style.css?v=13">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css"></noscript>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand"><i class="fas fa-book-open"></i><span>珍珍收支手札</span></div>
+        <div class="nav-brand"><i class="ph ph-book-open"></i><span>珍智账</span></div>
         <div class="nav-actions">
-            <button class="nav-btn" onclick="toggleTheme()" title="切换主题"><i class="fas fa-moon" id="themeIcon"></i></button>
+            <button class="nav-btn" onclick="toggleTheme()" title="切换主题"><i class="ph ph-moon" id="themeIcon"></i></button>
         </div>
     </nav>
 
@@ -28,8 +28,8 @@
                 </div>
                 <div class="overview-balance" id="balance">—</div>
                 <div class="overview-stats">
-                    <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-down"></i> 收入</div><div class="stat-value" id="incomeDisplay">—</div></div>
-                    <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-up"></i> 支出</div><div class="stat-value" id="expenseDisplay">—</div></div>
+                    <div class="stat-item"><div class="stat-label"><i class="ph ph-arrow-down"></i> 收入</div><div class="stat-value" id="incomeDisplay">—</div></div>
+                    <div class="stat-item"><div class="stat-label"><i class="ph ph-arrow-up"></i> 支出</div><div class="stat-value" id="expenseDisplay">—</div></div>
                 </div>
             </div>
             <div class="book-selector" id="homeBookSelector"></div>
@@ -60,8 +60,8 @@
 
         <!-- ===== 账本 ===== -->
         <div class="page" id="page-books" style="display:none;">
-            <div class="section-header"><h2 class="section-title">我的账本</h2><div style="display:flex;gap:8px;"><span class="section-more" id="bookManageBtn" onclick="toggleBookManage()"><i class="fas fa-pen"></i> 管理</span><span class="section-more" onclick="showCreateBookSheet()"><i class="fas fa-plus"></i> 新建</span></div></div>
-            <div id="bookManageBar" style="display:none;margin-bottom:16px;"><button class="member-remove-btn" onclick="batchDeleteBooks()" style="padding:8px 20px;font-size:0.85rem;flex:0;border-radius:12px;"><i class="fas fa-trash-alt"></i> 删除选中 <span id="bookCheckedCount">0</span></button></div>
+            <div class="section-header"><h2 class="section-title">我的账本</h2><div style="display:flex;gap:8px;"><span class="section-more" id="bookManageBtn" onclick="toggleBookManage()"><i class="ph ph-pencil"></i> 管理</span><span class="section-more" onclick="showCreateBookSheet()"><i class="ph ph-plus"></i> 新建</span></div></div>
+            <div id="bookManageBar" style="display:none;margin-bottom:16px;"><button class="member-remove-btn" onclick="batchDeleteBooks()" style="padding:8px 20px;font-size:0.85rem;flex:0;border-radius:12px;"><i class="ph ph-trash"></i> 删除选中 <span id="bookCheckedCount">0</span></button></div>
             <div id="bookList"></div>
         </div>
 
@@ -69,33 +69,33 @@
         <div class="page" id="page-profile" style="display:none;">
             <div class="overview-card" style="background:linear-gradient(135deg,#7C3AED,#A78BFA);padding:24px;">
                 <div style="display:flex;align-items:center;gap:14px;position:relative;z-index:1;">
-                    <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:1px solid rgba(255,255,255,0.2);" id="avatarDisplay">👤</div>
+                    <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:1px solid rgba(255,255,255,0.2);" id="avatarDisplay"><i class="ph ph-user-circle"></i></div>
                     <div><div style="font-size:1.2rem;font-weight:600;" id="userNameDisplay">用户</div>
                     <div style="font-size:0.8rem;opacity:0.7;" id="userBooksCount">0 个账本</div></div>
                 </div>
             </div>
             <div class="transaction-list" style="margin-top:16px;">
-                <div class="tx-item" onclick="showCreateBookSheet()"><div class="tx-icon cat-other"><i class="fas fa-plus"></i></div><div class="tx-info"><div class="tx-title">创建账本</div></div></div>
-                <div class="tx-item" onclick="showJoinBookSheet()"><div class="tx-icon cat-other"><i class="fas fa-link"></i></div><div class="tx-info"><div class="tx-title">加入账本</div></div></div>
-                <div class="tx-item" onclick="logout()"><div class="tx-icon" style="background:var(--expense-bg);color:var(--expense);"><i class="fas fa-sign-out-alt"></i></div><div class="tx-info"><div class="tx-title" style="color:var(--expense);">退出登录</div></div></div>
+                <div class="tx-item" onclick="showCreateBookSheet()"><div class="tx-icon cat-other"><i class="ph ph-plus"></i></div><div class="tx-info"><div class="tx-title">创建账本</div></div></div>
+                <div class="tx-item" onclick="showJoinBookSheet()"><div class="tx-icon cat-other"><i class="ph ph-link"></i></div><div class="tx-info"><div class="tx-title">加入账本</div></div></div>
+                <div class="tx-item" onclick="logout()"><div class="tx-icon" style="background:var(--expense-bg);color:var(--expense);"><i class="ph ph-sign-out"></i></div><div class="tx-info"><div class="tx-title" style="color:var(--expense);">退出登录</div></div></div>
             </div>
         </div>
     </main>
 
     <!-- 底部导航 -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchPage('home',this)"><i class="fas fa-home"></i><span>首页</span></div>
-        <div class="nav-item" onclick="switchPage('stats',this)"><i class="fas fa-chart-pie"></i><span>统计</span></div>
-        <div class="nav-item add-btn" onclick="openRecordSheet()"><i class="fas fa-plus"></i></div>
-        <div class="nav-item" onclick="switchPage('books',this)"><i class="fas fa-book"></i><span>账本</span></div>
-        <div class="nav-item" onclick="switchPage('profile',this)"><i class="fas fa-user"></i><span>我的</span></div>
+        <div class="nav-item active" onclick="switchPage('home',this)"><i class="ph ph-house"></i><span>首页</span></div>
+        <div class="nav-item" onclick="switchPage('stats',this)"><i class="ph ph-chart-pie-slice"></i><span>统计</span></div>
+        <div class="nav-item add-btn" onclick="openRecordSheet()"><i class="ph ph-plus"></i></div>
+        <div class="nav-item" onclick="switchPage('books',this)"><i class="ph ph-book"></i><span>账本</span></div>
+        <div class="nav-item" onclick="switchPage('profile',this)"><i class="ph ph-user"></i><span>我的</span></div>
     </nav>
 
     <!-- 日期详情浮卡 -->
     <div id="datePopover" style="display:none;position:fixed;z-index:3000;width:320px;max-width:85vw;max-height:50vh;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.15),0 2px 0 rgba(255,255,255,0.1) inset;padding:16px;overflow-y:auto;animation:popIn 0.25s cubic-bezier(0.16,1,0.3,1);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <span id="popoverTitle" style="font-size:0.95rem;font-weight:600;color:var(--text-primary);"></span>
-            <button onclick="closeDatePopover()" style="width:24px;height:24px;border-radius:8px;border:1px solid var(--border);background:var(--bg-hover);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.7rem;">✕</button>
+            <button onclick="closeDatePopover()" style="width:24px;height:24px;border-radius:8px;border:1px solid var(--border);background:var(--bg-hover);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.7rem;"><i class="ph ph-x"></i></button>
         </div>
         <div id="popoverContent"></div>
     </div>
@@ -104,7 +104,7 @@
     <!-- 记账弹窗 -->
     <div class="modal-overlay" id="recordModal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 class="modal-title">记一笔</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-header"><h3 class="modal-title">记一笔</h3><button class="modal-close" onclick="closeModal()"><i class="ph ph-x"></i></button></div>
             <div class="type-toggle">
                 <div class="type-option active" onclick="setRecordType('expense',this)">支出</div>
                 <div class="type-option income-opt" onclick="setRecordType('income',this)">收入</div>
@@ -125,7 +125,7 @@
                 <button class="numpad-btn" onclick="numpadInput('9')">9</button>
                 <button class="numpad-btn action" onclick="numpadInput('.')">.</button>
                 <button class="numpad-btn" onclick="numpadInput('0')">0</button>
-                <button class="numpad-btn action" onclick="numpadBack()"><i class="fas fa-backspace"></i></button>
+                <button class="numpad-btn action" onclick="numpadBack()"><i class="ph ph-backspace"></i></button>
             </div>
             <div class="form-group"><label class="form-label">账本</label><select id="recordBook" class="form-input"></select></div>
             <div class="form-group"><label class="form-label">分类</label><select id="recordCategory" class="form-input"></select></div>
@@ -138,7 +138,7 @@
     <!-- 新建账本弹窗 -->
     <div class="modal-overlay" id="createBookModal" onclick="closeCreateBook(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 class="modal-title">新建账本</h3><button class="modal-close" onclick="closeCreateBook()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-header"><h3 class="modal-title">新建账本</h3><button class="modal-close" onclick="closeCreateBook()"><i class="ph ph-x"></i></button></div>
             <div class="form-group"><label class="form-label">名称</label><input type="text" id="newBookName" class="form-input" placeholder="如：家庭日常"></div>
             <div class="form-group"><label class="form-label">月预算</label><input type="number" id="newBookBudget" class="form-input" placeholder="0" value="0"></div>
             <button class="submit-btn" onclick="createBook()">创建</button>
@@ -148,14 +148,14 @@
     <!-- 加入账本弹窗 -->
     <div class="modal-overlay" id="joinBookModal" onclick="closeJoinBook(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 class="modal-title">加入账本</h3><button class="modal-close" onclick="closeJoinBook()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-header"><h3 class="modal-title">加入账本</h3><button class="modal-close" onclick="closeJoinBook()"><i class="ph ph-x"></i></button></div>
             <div class="form-group"><label class="form-label">分享密钥</label><input type="text" id="joinKey" class="form-input" placeholder="输入密钥"></div>
             <button class="submit-btn" onclick="joinBook()">加入</button>
         </div>
     </div>
     <div id="toast" class="toast"></div>
-    <script src="/static/js/shared.js?v=1"></script>
+    <script src="/static/js/shared.js?v=3"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="/static/js/main.js?v=3"></script>
+    <script src="/static/js/main.js?v=5"></script>
 </body>
 </html>

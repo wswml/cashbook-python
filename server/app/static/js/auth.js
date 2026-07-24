@@ -1,4 +1,4 @@
-/* 认证 — 珍珍收支手札 */
+/* 认证 — 珍智账 */
 function toast(msg,t){const el=document.getElementById('toast');if(el){el.textContent=msg;el.className='toast '+(t||'info')+' show';setTimeout(()=>el.classList.remove('show'),2500);}}
 
 document.getElementById('loginForm')?.addEventListener('submit', async e => {

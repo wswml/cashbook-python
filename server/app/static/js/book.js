@@ -50,11 +50,11 @@ function renderFlows(){
     l.innerHTML=s.map((f,i)=>{
         const ic=f.flow_type==='收入';
         const cls=getCls(f.industry_type);const icon=getIcon(f.industry_type);
-        return '<div class="tx-item stagger" style="animation-delay:'+((i%20)*0.05)+'s;"><div class="tx-icon '+cls+'"><i class="fas fa-'+icon+'"></i></div><div class="tx-info"><div class="tx-title">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+f.day+' · '+(f.attribution||'我')+(f.user_id===cu.id?' <span class="tx-del" onclick="event.stopPropagation();deleteFlow('+f.id+')" style="color:var(--expense);cursor:pointer;">删除</span>':'')+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
+        return '<div class="tx-item stagger" style="animation-delay:'+((i%20)*0.05)+'s;"><div class="tx-icon '+cls+'"><i class="ph ph-'+icon+'"></i></div><div class="tx-info"><div class="tx-title">'+(f.name||f.industry_type||'未分类')+'</div><div class="tx-meta">'+f.day+' · '+(f.attribution||'我')+(f.user_id===cu.id?' <span class="tx-del" onclick="event.stopPropagation();deleteFlow('+f.id+')" style="color:var(--expense);cursor:pointer;">删除</span>':'')+'</div></div><div class="tx-amount '+(ic?'income':'expense')+'">'+(ic?'+':'-')+'¥'+(f.money||0).toFixed(2)+'</div></div>'
     }).join('')
 }
 function getCls(c){const m={餐饮:'cat-food',交通:'cat-transport',购物:'cat-shopping',居住:'cat-housing',娱乐:'cat-entertainment',医疗:'cat-medical',教育:'cat-education',其他:'cat-other'};return m[c]||'cat-other'}
-function getIcon(c){const m={餐饮:'utensils',交通:'bus',购物:'shopping-bag',居住:'home',娱乐:'film',医疗:'heartbeat',教育:'graduation-cap',工资:'wallet',奖金:'gift',投资:'chart-line',其他收入:'plus-circle',其他:'ellipsis-h'};return m[c]||'ellipsis-h'}
+function getIcon(c){const m={餐饮:'fork-knife',交通:'bus',购物:'shopping-bag',居住:'house',娱乐:'film-strip',医疗:'heartbeat',教育:'graduation-cap',工资:'wallet',奖金:'gift',投资:'trend-up',其他收入:'plus-circle',其他:'dots-three'};return m[c]||'dots-three'}
 function filterFlows(t,el){af=t;document.querySelectorAll('#flowCategoryFilter .category-item').forEach(e=>e.classList.remove('active'));if(el)el.classList.add('active');renderFlows()}
 
 function drawCharts(s){if(typeof Chart==='undefined')return;drawTypeChart(s);drawTrendChart(s)}
@@ -89,7 +89,7 @@ function switchView(name){
 function renderMembers(){
     const isOwner=members.some(m=>m.user_id===cu.id&&m.role==='owner');
     document.getElementById('memberList').innerHTML=members.length
-        ? '<div style="padding:4px 0;">'+members.map(m=>'<div class="tx-item"><div class="tx-icon cat-other"><i class="fas fa-user"></i></div><div class="tx-info"><div class="tx-title">'+(m.name||'用户')+'</div><div class="tx-meta">'+(m.role==='owner'?'所有者':'成员')+'</div></div>'+(isOwner&&m.role!=='owner'?'<button class="member-remove-btn" onclick="removeMember('+m.user_id+')">移除</button>':'')+'</div>').join('')+'</div>'
+        ? '<div style="padding:4px 0;">'+members.map(m=>'<div class="tx-item"><div class="tx-icon cat-other"><i class="ph ph-user"></i></div><div class="tx-info"><div class="tx-title">'+(m.name||'用户')+'</div><div class="tx-meta">'+(m.role==='owner'?'所有者':'成员')+'</div></div>'+(isOwner&&m.role!=='owner'?'<button class="member-remove-btn" onclick="removeMember('+m.user_id+')">移除</button>':'')+'</div>').join('')+'</div>'
         : '<div style="text-align:center;padding:30px;color:var(--text-muted);">暂无成员</div>'
 }
 async function removeMember(uid){
@@ -151,9 +151,9 @@ function inputBack(){
 }
 function renderCatGrid(){
     const cats=mt==='income'
-        ?[{n:'工资',i:'wallet',c:'#10B981'},{n:'奖金',i:'gift',c:'#F59E0B'},{n:'投资',i:'chart-line',c:'#3B82F6'},{n:'其他',i:'plus-circle',c:'#64748B'}]
-        :[{n:'餐饮',i:'utensils',c:'#9333EA'},{n:'交通',i:'bus',c:'#4F46E5'},{n:'购物',i:'shopping-bag',c:'#DB2777'},{n:'娱乐',i:'film',c:'#059669'},{n:'居住',i:'home',c:'#D97706'},{n:'医疗',i:'heartbeat',c:'#DC2626'},{n:'教育',i:'graduation-cap',c:'#0891B2'},{n:'其他',i:'ellipsis-h',c:'#6B7280'}];
-    document.getElementById('modalCatGrid').innerHTML=cats.map((c,i)=>'<div class="cat-option'+(i===0?' selected':'')+'" onclick="selectCat(this,\''+c.n+'\')"><i class="fas fa-'+c.i+'" style="color:'+c.c+';"></i><span>'+c.n+'</span></div>').join('')
+        ?[{n:'工资',i:'wallet',c:'#10B981'},{n:'奖金',i:'gift',c:'#F59E0B'},{n:'投资',i:'trend-up',c:'#3B82F6'},{n:'其他',i:'plus-circle',c:'#64748B'}]
+        :[{n:'餐饮',i:'fork-knife',c:'#9333EA'},{n:'交通',i:'bus',c:'#4F46E5'},{n:'购物',i:'shopping-bag',c:'#DB2777'},{n:'娱乐',i:'film-strip',c:'#059669'},{n:'居住',i:'house',c:'#D97706'},{n:'医疗',i:'heartbeat',c:'#DC2626'},{n:'教育',i:'graduation-cap',c:'#0891B2'},{n:'其他',i:'dots-three',c:'#6B7280'}];
+    document.getElementById('modalCatGrid').innerHTML=cats.map((c,i)=>'<div class="cat-option'+(i===0?' selected':'')+'" onclick="selectCat(this,\''+c.n+'\')"><i class="ph ph-'+c.i+'" style="color:'+c.c+';"></i><span>'+c.n+'</span></div>').join('')
 }
 function selectCat(el,name){
     document.querySelectorAll('#modalCatGrid .cat-option').forEach(e=>e.classList.remove('selected'));

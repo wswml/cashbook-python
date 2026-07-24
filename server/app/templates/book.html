@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>账本详情</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
-    <link rel="stylesheet" href="/static/css/style.css?v=8">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💜</text></svg>">
+    <link rel="stylesheet" href="/static/css/style.css?v=13">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css"></noscript>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand"><i class="fas fa-book-open"></i><span id="bookName">账本</span></div>
+        <div class="nav-brand"><i class="ph ph-book-open"></i><span id="bookName">账本</span></div>
         <div class="nav-actions">
-            <button class="nav-btn" onclick="showShareSheet()" title="分享账本"><i class="fas fa-share-alt"></i></button>
-            <button class="nav-btn" onclick="toggleTheme()" title="切换主题"><i class="fas fa-moon" id="themeIcon"></i></button>
-            <button class="nav-btn" onclick="window.location.href='/'" title="返回"><i class="fas fa-arrow-left"></i></button>
+            <button class="nav-btn" onclick="showShareSheet()" title="分享账本"><i class="ph ph-share-network"></i></button>
+            <button class="nav-btn" onclick="toggleTheme()" title="切换主题"><i class="ph ph-moon" id="themeIcon"></i></button>
+            <button class="nav-btn" onclick="window.location.href='/'" title="返回"><i class="ph ph-arrow-left"></i></button>
         </div>
     </nav>
 
@@ -26,15 +26,15 @@
             <div class="overview-header">
                 <span class="overview-label">本月结余</span>
                 <div class="overview-period" onclick="prevMonth()" style="cursor:pointer;">
-                    <i class="fas fa-chevron-left" style="font-size:0.7rem;"></i>
+                    <i class="ph ph-caret-left" style="font-size:0.7rem;"></i>
                     <span id="monthLabel">本月</span>
-                    <i class="fas fa-chevron-right" style="font-size:0.7rem;" onclick="event.stopPropagation();nextMonth()"></i>
+                    <i class="ph ph-caret-right" style="font-size:0.7rem;" onclick="event.stopPropagation();nextMonth()"></i>
                 </div>
             </div>
             <div class="overview-balance" id="balance">¥0.00</div>
             <div class="overview-stats">
-                <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-down" style="font-size:0.7rem;"></i>收入</div><div class="stat-value" id="totalIncome">¥0</div></div>
-                <div class="stat-item"><div class="stat-label"><i class="fas fa-arrow-up" style="font-size:0.7rem;"></i>支出</div><div class="stat-value" id="totalExpense">¥0</div></div>
+                <div class="stat-item"><div class="stat-label"><i class="ph ph-arrow-down" style="font-size:0.7rem;"></i>收入</div><div class="stat-value" id="totalIncome">¥0</div></div>
+                <div class="stat-item"><div class="stat-label"><i class="ph ph-arrow-up" style="font-size:0.7rem;"></i>支出</div><div class="stat-value" id="totalExpense">¥0</div></div>
             </div>
         </div>
 
@@ -63,17 +63,17 @@
 
     <!-- 底部导航 -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchView('flows')"><i class="fas fa-list"></i><span>流水</span></div>
-        <div class="nav-item" onclick="switchView('stats')"><i class="fas fa-chart-pie"></i><span>统计</span></div>
-        <div class="nav-item add-btn" onclick="openSheet()"><i class="fas fa-plus"></i></div>
-        <div class="nav-item" onclick="switchView('members')"><i class="fas fa-users"></i><span>成员</span></div>
-        <div class="nav-item" onclick="window.location.href='/'"><i class="fas fa-home"></i><span>首页</span></div>
+        <div class="nav-item active" onclick="switchView('flows')"><i class="ph ph-list-dashes"></i><span>流水</span></div>
+        <div class="nav-item" onclick="switchView('stats')"><i class="ph ph-chart-pie-slice"></i><span>统计</span></div>
+        <div class="nav-item add-btn" onclick="openSheet()"><i class="ph ph-plus"></i></div>
+        <div class="nav-item" onclick="switchView('members')"><i class="ph ph-users"></i><span>成员</span></div>
+        <div class="nav-item" onclick="window.location.href='/'"><i class="ph ph-house"></i><span>首页</span></div>
     </nav>
 
     <!-- 记账弹窗 -->
     <div class="modal-overlay" id="recordModal" onclick="closeModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 class="modal-title">记一笔</h3><button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-header"><h3 class="modal-title">记一笔</h3><button class="modal-close" onclick="closeModal()"><i class="ph ph-x"></i></button></div>
             <div class="type-toggle">
                 <div class="type-option active" onclick="setType('expense',this)">支出</div>
                 <div class="type-option income-opt" onclick="setType('income',this)">收入</div>
@@ -94,7 +94,7 @@
                 <button class="numpad-btn" onclick="inputNum('9')">9</button>
                 <button class="numpad-btn action" onclick="inputNum('.')">.</button>
                 <button class="numpad-btn" onclick="inputNum('0')">0</button>
-                <button class="numpad-btn action" onclick="inputBack()"><i class="fas fa-backspace"></i></button>
+                <button class="numpad-btn action" onclick="inputBack()"><i class="ph ph-backspace"></i></button>
             </div>
             <div class="form-group"><label class="form-label">选择分类</label>
                 <div class="category-select" id="modalCatGrid"></div>
@@ -108,7 +108,7 @@
     <!-- 分享弹窗 -->
     <div class="modal-overlay" id="shareModal" onclick="closeShareModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 class="modal-title">分享账本</h3><button class="modal-close" onclick="closeShareModal()"><i class="fas fa-times"></i></button></div>
+            <div class="modal-header"><h3 class="modal-title">分享账本</h3><button class="modal-close" onclick="closeShareModal()"><i class="ph ph-x"></i></button></div>
             <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:20px;">分享密钥<br><strong id="shareKeyDisplay" style="font-size:1.2rem;color:var(--accent);letter-spacing:2px;"></strong></p>
             <button class="submit-btn" onclick="copyShareKey()">复制密钥</button>
         </div>
@@ -116,8 +116,8 @@
 
     <div id="toast" class="toast"></div>
     <script>window.bookId="{{ book_id }}";</script>
-    <script src="/static/js/shared.js?v=1"></script>
+    <script src="/static/js/shared.js?v=3"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="/static/js/book.js?v=7"></script>
+    <script src="/static/js/book.js?v=9"></script>
 </body>
 </html>
