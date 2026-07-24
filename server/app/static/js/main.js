@@ -4,28 +4,6 @@ let flowPage=0,flowPageSize=20,flowLoading=false;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth()+1;
 const user=JSON.parse(localStorage.getItem('user')||sessionStorage.getItem('user')||'{}');
 
-function gt(){return localStorage.getItem('token')||sessionStorage.getItem('token')}
-if(!gt())window.location.href='/login';
-
-async function api(url,o={}){
-    if(!o.headers)o.headers={};
-    o.headers['Authorization']='Bearer '+gt();
-    const r=await fetch(url,o);
-    const nt=r.headers.get('X-Refresh-Token');
-    if(nt){if(localStorage.getItem('rememberMe'))localStorage.setItem('token',nt);else sessionStorage.setItem('token',nt)}
-    return r.json()
-}
-
-const theme=localStorage.getItem('theme')||'light';
-document.documentElement.setAttribute('data-theme',theme);
-document.getElementById('themeIcon').className=theme==='dark'?'fas fa-sun':'fas fa-moon';
-function toggleTheme(){
-    const d=document.documentElement.getAttribute('data-theme')==='dark';
-    document.documentElement.setAttribute('data-theme',d?'light':'dark');
-    document.getElementById('themeIcon').className=d?'fas fa-moon':'fas fa-sun';
-    localStorage.setItem('theme',d?'light':'dark')
-}
-
 // ===== 页面切换 =====
 function switchPage(name,btn){
     document.querySelectorAll('.page').forEach(p=>p.style.display='none');
@@ -74,38 +52,6 @@ async function selectBook(bid,el){flowPage=0;
     const all=await api('/api/entry/flow/all?bookId='+bid);
     if(all.code===200)allFlows=all.data||[];
     renderHome()
-}
-
-// ===== 数字滚动动画 =====
-function animateNumber(el, target, duration=800){
-    if(!el)return;
-    if(target===0){el.textContent='¥0.00';return}
-    const start=performance.now();
-    const init=0;
-    function update(now){
-        const p=Math.min((now-start)/duration,1);
-        const cur=init+(target-init)*p;
-        el.textContent='¥'+cur.toFixed(2);
-        if(p<1)requestAnimationFrame(update)
-    }
-    requestAnimationFrame(update)
-}
-
-// ===== 彩纸爆炸 =====
-function explodeConfetti(x, y){
-    const colors=['#7C3AED','#A78BFA','#10B981','#EF4444','#F59E0B','#F472B6','#34D399'];
-    for(let i=0;i<24;i++){
-        const el=document.createElement('div');
-        el.className='confetti-piece';
-        el.style.left=x+'px';
-        el.style.top=y+'px';
-        el.style.background=colors[Math.floor(Math.random()*colors.length)];
-        el.style.setProperty('--tx',(Math.random()-0.5)*240+'px');
-        el.style.setProperty('--ty',(Math.random()-1)*240+'px');
-        el.style.borderRadius=Math.random()>0.5?'50%':'2px';
-        document.body.appendChild(el);
-        setTimeout(()=>el.remove(),800)
-    }
 }
 
 function renderHome(){
@@ -379,7 +325,8 @@ async function submitRecord() {
         // 彩纸爆炸 — 从底部导航中心按钮位置爆出
         const btn=document.querySelector('.nav-item.add-btn');
         if(btn){const r=btn.getBoundingClientRect();explodeConfetti(r.left+r.width/2,r.top+r.height/2)}
-        toast('保存成功 ✨','success');closeModal();document.getElementById('recordAmount').value='¥0.00';document.getElementById('recordName').value='';location.reload()
+        toast('保存成功 ✨','success');closeModal();document.getElementById('recordAmount').value='¥0.00';document.getElementById('recordName').value='';
+        loadHome()  // 刷新数据而非整页reload
     }
     else toast(r.message||'保存失败','error')
 }
@@ -404,13 +351,11 @@ async function joinBook(){
     else toast(r.message||'加入失败','error')
 }
 
-function toast(msg,t){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(t||'info')+' show';setTimeout(()=>el.classList.remove('show'),2500)}
-
 // ===== 数字键盘 =====
 function numpadInput(n){
     const inp=document.getElementById('recordAmount');
     let v=inp.value.replace('¥','');
-    v=v.replace(/\.\d+$/,'');
+    v=v.replace(/\\.\\d+$/,'');
     if(v==='0')v='';
     if(n==='.'&&v.includes('.'))return;
     v=v+n;
@@ -418,7 +363,7 @@ function numpadInput(n){
 }
 function numpadBack(){
     const inp=document.getElementById('recordAmount');
-    let v=inp.value.replace('¥','').replace(/\.\d+$/,'');
+    let v=inp.value.replace('¥','').replace(/\\.\\d+$/,'');
     v=v.slice(0,-1);
     inp.value=v?('¥'+(parseFloat(v)||0).toFixed(2)):'¥0.00'
 }

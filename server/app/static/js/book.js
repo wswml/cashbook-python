@@ -6,23 +6,6 @@ let cy = new Date().getFullYear(), cm = new Date().getMonth() + 1;
 let mt = 'expense', af = 'all';
 let tc = null, trc = null;
 
-function gt(){return localStorage.getItem('token')||sessionStorage.getItem('token')}
-if(!gt())window.location.href='/login';
-
-async function api(url,o={}){
-    if(!o.headers)o.headers={};
-    o.headers['Authorization']='Bearer '+gt();
-    const r=await fetch(url,o);
-    const nt=r.headers.get('X-Refresh-Token');
-    if(nt){if(localStorage.getItem('rememberMe'))localStorage.setItem('token',nt);else sessionStorage.setItem('token',nt)}
-    return r.json()
-}
-
-const st=localStorage.getItem('theme')||'light';
-document.documentElement.setAttribute('data-theme',st);
-document.getElementById('themeIcon').className=st==='dark'?'fas fa-sun':'fas fa-moon';
-function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');document.getElementById('themeIcon').className=d?'fas fa-moon':'fas fa-sun';localStorage.setItem('theme',d?'light':'dark')}
-
 async function init(){
     const ms=cy+'-'+String(cm).padStart(2,'0');
     const[ir,sr,fr,mr]=await Promise.all([
@@ -44,33 +27,6 @@ function updateStats(s){
     document.getElementById('totalExpense').textContent='¥'+(s.total_expense||0).toFixed(0);
     animateNumber(document.getElementById('balance'), s.balance||0);
     drawCharts(s)
-}
-// ===== 数字滚动动画 =====
-function animateNumber(el, target, duration=800){
-    if(!el)return;
-    if(target===0){el.textContent='¥0.00';return}
-    const start=performance.now();
-    function update(now){
-        const p=Math.min((now-start)/duration,1);
-        el.textContent='¥'+(target*p).toFixed(2);
-        if(p<1)requestAnimationFrame(update)
-    }
-    requestAnimationFrame(update)
-}
-// ===== 彩纸爆炸 =====
-function explodeConfetti(x, y){
-    const colors=['#7C3AED','#A78BFA','#10B981','#EF4444','#F59E0B','#F472B6','#34D399'];
-    for(let i=0;i<24;i++){
-        const el=document.createElement('div');
-        el.className='confetti-piece';
-        el.style.left=x+'px';el.style.top=y+'px';
-        el.style.background=colors[Math.floor(Math.random()*colors.length)];
-        el.style.setProperty('--tx',(Math.random()-0.5)*240+'px');
-        el.style.setProperty('--ty',(Math.random()-1)*240+'px');
-        el.style.borderRadius=Math.random()>0.5?'50%':'2px';
-        document.body.appendChild(el);
-        setTimeout(()=>el.remove(),800)
-    }
 }
 function prevMonth(){cm--;if(cm<1){cm=12;cy--}loadMonth()}
 function nextMonth(){cm++;if(cm>12){cm=1;cy++}loadMonth()}
@@ -165,7 +121,9 @@ async function saveFlow(){
     if(r.code===200){
         const btn=document.querySelector('.nav-item.add-btn');
         if(btn){const r=btn.getBoundingClientRect();explodeConfetti(r.left+r.width/2,r.top+r.height/2)}
-        toast('保存成功 ✨','success');closeModal();document.getElementById('modalMoney').value='¥0.00';document.getElementById('modalName').value='';window._selectedCat=null;await loadMonth();location.reload()}
+        toast('保存成功 ✨','success');closeModal();document.getElementById('modalMoney').value='¥0.00';document.getElementById('modalName').value='';window._selectedCat=null;
+        await loadMonth()  // 刷新数据而非整页reload
+    }
     else toast(r.message||'保存失败','error')
 }
 async function deleteFlow(fid){
@@ -179,7 +137,7 @@ function inputNum(n){
     const inp=document.getElementById('modalMoney');
     let v=inp.value.replace('¥','');
     // 去掉小数部分，避免 3.00+5=3.005 的问题
-    v=v.replace(/\.\d+$/,'');
+    v=v.replace(/\\.\\d+$/,'');
     if(v==='0')v='';
     if(n==='.'&&v.includes('.'))return;
     v=v+n;
@@ -187,7 +145,7 @@ function inputNum(n){
 }
 function inputBack(){
     const inp=document.getElementById('modalMoney');
-    let v=inp.value.replace('¥','').replace(/\.\d+$/,'');
+    let v=inp.value.replace('¥','').replace(/\\.\\d+$/,'');
     v=v.slice(0,-1);
     inp.value=v?('¥'+(parseFloat(v)||0).toFixed(2)):'¥0.00'
 }
@@ -212,7 +170,5 @@ async function showShareSheet(){
 }
 function closeShareModal(e){if(!e||e.target.id==='shareModal')document.getElementById('shareModal').classList.remove('active')}
 function copyShareKey(){const el=document.getElementById('shareKeyDisplay');navigator.clipboard?.writeText(el.textContent).catch(()=>{});toast('已复制到剪贴板','success')}
-
-function toast(msg,t){const el=document.getElementById('toast');el.textContent=msg;el.className='toast '+(t||'info')+' show';setTimeout(()=>el.classList.remove('show'),2500)}
 
 init();

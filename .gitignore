@@ -1,5 +1,7 @@
 # 密钥文件 — 不要提交
 password.json
+.env
+server/.env
 
 # Python
 __pycache__/
