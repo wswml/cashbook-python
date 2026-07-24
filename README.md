@@ -1,6 +1,6 @@
-# Cashbook
+# 珍智账 (Zhen_ZhiZhang)
 
-微信/支付宝账单自动记账系统。Android 端 Xposed 模块抓取 → 本地解析导出 → 服务端 FastAPI 入库 → Web 看板。
+微信/支付宝账单自动记账系统。Android 端 Xposed 模块抓取 → 本地解析导出 → 服务端 FastAPI 入库 → Web 看板（珍智账）。
 
 ## 项目结构
 
@@ -62,7 +62,7 @@ messages.log ──→ module/jz.py 解析 ──→ qianji.csv
 ### 服务器
 
 ```bash
-git clone https://github.com/wswml/cashbook-python.git /root/cashbook-python
+git clone https://github.com/wswml/Zhen_ZhiZhang.git /root/cashbook-python
 cd /root/cashbook-python/server
 pip install -r requirements.txt
 cp .env.example .env        # 编辑填入实际密钥
@@ -72,7 +72,7 @@ pm2 start ecosystem.config.cjs && pm2 save
 ### 本地 Termux
 
 ```bash
-git clone https://github.com/wswml/cashbook-python.git ~/cashbook
+git clone https://github.com/wswml/Zhen_ZhiZhang.git ~/cashbook
 cd ~/cashbook
 cp password.json.example password.json
 # 编辑 password.json 填入服务器 IP、JWT token、DeepSeek key
@@ -90,6 +90,7 @@ python3 ~/cashbook/jz_import.py
 
 # 服务器更新
 ssh root@47.99.240.71 'cd /root/cashbook-python && git pull && pm2 restart cashbook'
+# 注：服务器路径仍用 /root/cashbook-python，未随仓库改名
 ```
 
 ## 分类策略
