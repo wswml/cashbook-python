@@ -14,8 +14,9 @@ import os, sys, re, json, time
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
-# 确保能找到项目根的 cashbook_config.py
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 确保能找到项目根的 cashbook_config.py（处理符号链接）
+_PROJ_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.insert(0, _PROJ_ROOT)
 
 # ── 统一配置 ──
 from cashbook_config import (

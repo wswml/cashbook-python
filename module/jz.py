@@ -16,7 +16,7 @@ import subprocess, sqlite3, os, re, json, sys
 from datetime import datetime, timedelta
 
 # ── 统一配置 ──
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from cashbook_config import WECHAT_LOG, ALIPAY_DB, ALIPAY_TMP, ALIPAY_LAST, CSV_OUTPUT
 
 # ── 路径 ──
